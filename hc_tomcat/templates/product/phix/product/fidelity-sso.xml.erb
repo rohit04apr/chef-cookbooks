@@ -1,0 +1,4 @@
+<Context docBase="/usr/local/fidelity/applications/fidelity-sso" path="sso" >
+  <Resource name="jdbc/companyFidelityCustomDS" auth="Container" type="javax.sql.DataSource" maxActive="25" maxIdle="5" maxWait="10000" driverClassName="oracle.jdbc.OracleDriver"
+url="jdbc:oracle:thin:@hcenuat-ora-aws.hcinternal.net:1521:hcenuat" username="fidelity_phix_uat_sso_db" password="pr1vate" validationQuery="Select 1 from dual" />
+</Context>

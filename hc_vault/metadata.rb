@@ -1,0 +1,8 @@
+name 'hc_vault'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures hc_vault'
+long_description 'Installs/Configures hc_vault'
+version '0.1.1'
+depends 'chef-vault'

@@ -1,0 +1,18 @@
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        #Enter server name here eg. phix-dev02.demo.company.com
+        #ServerName <Server name>
+        ServerName 
+
+        #Enter server alias here eg. *.phix-dev02.demo.company.com
+        #ServerAlias <Server alias>
+        ServerAlias 
+
+        RewriteEngine on
+        RewriteCond %{HTTPS} off
+        RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+        RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)
+        RewriteRule .* - [F]
+
+</VirtualHost>

@@ -1,0 +1,38 @@
+<VirtualHost *:80>
+    ServerName <%= node['hc_apache']['virtualhost']['servername'] %>
+    ServerAlias <%= node['hc_apache']['virtualhost']['serveralias'] %>
+
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header unset Content-Security-Policy
+    Header add Content-Security-Policy <%= node['hc_apache']['virtualhost']['content_security_policy'] %>
+    Header unset X-Content-Security-Policy
+    Header add X-Content-Security-Policy "default-src 'self'"
+    Header unset X-WebKit-CSP
+    Header add X-WebKit-CSP "default-src 'self'"
+    Header set X-Content-Type-Options: nosniff
+    Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+    ProxyPreserveHost On
+
+    #CustomLog /var/log/httpd/access.log combined
+    CustomLog logs/access_log combined
+    ErrorLog logs/error_log
+
+    <Directory />
+            Options FollowSymLinks
+            AllowOverride None
+            Order allow,deny
+            Allow from all
+    </Directory>
+
+    <% node['hc_apache']['virtualhost']['portals'].each do |portal| -%>
+
+    ProxyPass /<%= portal %> <%= node['hc_apache']['virtualhost']['backend']['protocal'] %>://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:<%= node['hc_apache']['virtualhost']['backend']['port'] %>/<%= portal %>
+    ProxyPassReverse /<%= portal %> <%= node['hc_apache']['virtualhost']['backend']['protocal']%>://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:<%= node['hc_apache']['virtualhost']['backend']['port']%>/<%= portal %>
+    <Location /<%= portal %>>
+            Order allow,deny
+            Allow from all
+    </Location>
+    <% end %>
+</VirtualHost>
+

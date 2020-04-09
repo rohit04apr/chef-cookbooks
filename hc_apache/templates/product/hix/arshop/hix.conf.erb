@@ -1,0 +1,48 @@
+<VirtualHost *:80>
+    ServerName <%= node['hc_apache']['virtualhost']['servername'] %>
+    ServerAlias <%= node['hc_apache']['virtualhost']['serveralias'] %>
+    ProxyPreserveHost On
+
+                ProxyPass /agent http://localhost:8080/agent
+                ProxyPassReverse /agent http://localhost:8080/agent
+
+        <Location /agent>
+                Order allow,deny
+                Allow from all
+        </Location>
+
+    ProxyTimeout 900
+
+    RedirectMatch ^/[a-z0-9]+$ /
+
+    #CustomLog /var/log/httpd/access.log combined
+    CustomLog logs/access_log combined
+    ErrorLog logs/error_log
+    LogLevel debug
+    DocumentRoot /opt/rh/httpd24/root/var/www
+    <Directory />
+            Options FollowSymLinks
+            AllowOverride None
+            Order allow,deny
+            Allow from all
+    </Directory>
+  
+     ProxyPass /exchange-hapi/services/ExchangePlanManagement  <%= node['hc_apache']['virtualhost']['backend']['protocal'] %>://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:<%= node['hc_apache']['virtualhost']['backend']['port'] %>/pmsws/ws
+     ProxyPassReverse /exchange-hapi/services/ExchangePlanManagement  <%= node['hc_apache']['virtualhost']['backend']['protocal'] %>://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:<%= node['hc_apache']['virtualhost']['backend']['port'] %>/pmsws/ws
+
+     <Location /exchange-hapi/services/ExchangePlanManagement>
+           Order allow,deny
+           Allow from all
+     </Location>
+
+    <% node['hc_apache']['arshop_hix']['virtualhost']['portals'].each do |portal| -%>
+    #details for <%= portal %>
+    ProxyPass /<%= portal %> <%= node['hc_apache']['virtualhost']['backend']['protocal'] %>://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:<%= node['hc_apache']['virtualhost']['backend']['port'] %>/<%= portal %>
+    ProxyPassReverse /<%= portal %> <%= node['hc_apache']['virtualhost']['backend']['protocal']%>://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:<%= node['hc_apache']['virtualhost']['backend']['port']%>/<%= portal %>
+    <Location /<%= portal %>>
+            Order allow,deny
+            Allow from all
+    </Location>
+    <% end %>
+</VirtualHost>
+

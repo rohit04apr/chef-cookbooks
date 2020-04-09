@@ -1,0 +1,7 @@
+name 'hc_apacheds'
+maintainer 'company'
+maintainer_email 'devops@company.com'
+license 'all_rights'
+description 'Installs/Configures hc_apacheds'
+long_description 'Installs/Configures hc_apacheds'
+version '0.1.0'

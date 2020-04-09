@@ -1,0 +1,624 @@
+<VirtualHost *:80>
+	ServerName <%= node['hc_apache']['wfm']['virtualhost']['portal']['api_domain'] %>
+
+	BrowserMatch "MSIE [2-6]" \
+					nokeepalive ssl-unclean-shutdown \
+					downgrade-1.0 force-response-1.0
+	# MSIE 7 and newer should be able to use keepalive
+	BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+	ProxyPreserveHost On
+
+	DocumentRoot /usr/local/applications/wfm
+
+	ProxyPass /invoice-review  http://localhost:8114/invoice-review
+	ProxyPassReverse /invoice-review  http://localhost:8114/invoice-review
+
+	ProxyPass /security/user/current  http://localhost:8001/security/user/current
+	ProxyPassReverse /security/user/current  http://localhost:8001/security/user/current
+
+        ProxyPass /contracts  http://localhost:8255/contracts
+	ProxyPassReverse /contracts  http://localhost:8255/contracts
+
+	ProxyPass /configurations http://localhost:8100/configurations
+	ProxyPassReverse /configurations  http://localhost:8100/configurations
+
+	ProxyPass /fetchCustomer  http://localhost:8110/fetchCustomer
+	ProxyPassReverse /fetchCustomer  http://localhost:8110/fetchCustomer
+
+	ProxyPass /account-statements  http://localhost:8301/account-statements
+	ProxyPassReverse /account-statements  http://localhost:8301/account-statements
+
+	ProxyPass /invoices  http://localhost:8255/invoices
+	ProxyPassReverse /invoices  http://localhost:8255/invoices
+
+	ProxyPass /manage-payments  http://localhost:8103/manage-payments
+	ProxyPassReverse /manage-payments  http://localhost:8103/manage-payments
+
+	ProxyPass /write-off  http://localhost:8103/write-off
+	ProxyPassReverse /write-off  http://localhost:8103/write-off
+
+	ProxyPass /writeon-rules  http://localhost:8114/writeon-rules
+	ProxyPassReverse /writeon-rules  http://localhost:8114/writeon-rules
+
+	ProxyPass /dms  http://localhost:8081/dms
+	ProxyPassReverse /dms  http://localhost:8081/dms
+
+	ProxyPass /mps  http://localhost:8106/mps
+	ProxyPassReverse /mps  http://localhost:8106/mps
+
+	ProxyPass /reports  http://localhost:8302/reports
+	ProxyPassReverse /reports  http://localhost:8302/reports
+
+	ProxyPass /cust-summary  http://localhost:8255/cust-summary
+	ProxyPassReverse  /cust-summary  http://localhost:8255/cust-summary
+
+	ProxyPass /bem http://localhost:8113/bem
+	ProxyPassReverse /bem http://localhost:8113/bem
+
+	ProxyPass /billing-policies http://localhost:8114/billing-policies
+	ProxyPassReverse /billing-policies http://localhost:8114/billing-policies
+
+	ProxyPass /rules  http://localhost:8114/rules
+	ProxyPassReverse /rules  http://localhost:8114/rules
+
+	ProxyPass /ftrules http://localhost:8114/ftrules
+	ProxyPassReverse /ftrules http://localhost:8114/ftrules
+
+	ProxyPass /fetchItemDetail  http://localhost:8150/fetchItemDetail
+	ProxyPassReverse /fetchItemDetail  http://localhost:8150/fetchItemDetail
+
+	ProxyPass /manageaccount  http://localhost:8216/manageaccount
+	ProxyPassReverse /manageaccount  http://localhost:8216/manageaccount
+
+	ProxyPass /rules  http://localhost:8114/rules
+	ProxyPassReverse /rules  http://localhost:8114/rules
+
+	ProxyPass /ft  http://localhost:8124/ft
+	ProxyPassReverse /ft  http://localhost:8124/ft
+
+	ProxyPass /items  http://localhost:8150/items
+	ProxyPassReverse /items  http://localhost:8150/items
+
+	ProxyPass /create  http://localhost:8150/create
+	ProxyPassReverse /create  http://localhost:8150/create
+
+	ProxyPass /glaccounts http://localhost:8216/glaccounts
+	ProxyPassReverse /glaccounts http://localhost:8216/glaccounts
+
+	ProxyPass /ftrules http://localhost:8114/ftrules
+	ProxyPassReverse /ftrules http://localhost:8114/ftrules
+
+	ProxyPass /billing/policy/remittances  http://localhost:8114/billing/policy/remittances
+	ProxyPassReverse /billing/policy/remittances  http://localhost:8114/billing/policy/remittances
+
+	ProxyPass /wfm-invoice  http://localhost:8128/wfm-invoice
+	ProxyPassReverse /wfm-invoice  http://localhost:8128/wfm-invoice
+
+	ProxyPass /billing-run-cycle  http://localhost:8125/billing-run-cycle
+	ProxyPassReverse /billing-run-cycle  http://localhost:8125/billing-run-cycle
+
+	ProxyPass /remit-advice-cycle  http://localhost:8126/remit-advice-cycle
+	ProxyPassReverse /remit-advice-cycle  http://localhost:8126/remit-advice-cycle
+
+	ProxyPass /remit-advice  http://localhost:8129/remit-advice
+	ProxyPassReverse /remit-advice  http://localhost:8129/remit-advice
+
+	ProxyPass /imports  http://localhost:8150/imports
+	ProxyPassReverse /imports  http://localhost:8150/imports
+
+	ProxyPass /user-management  http://localhost:8001/user-management
+	ProxyPassReverse /user-management  http://localhost:8001/user-management
+
+	ProxyPass /registration  http://localhost:8001/registration
+	ProxyPassReverse /registration  http://localhost:8001/registration
+
+	ProxyPass /export  http://localhost:8151/export
+	ProxyPassReverse /export  http://localhost:8151/export
+
+	ProxyPass /remits  http://localhost:8130/remits
+	ProxyPassReverse /remits  http://localhost:8130/remits
+
+	ProxyPass /manage-subscription  http://localhost:8255/manage-subscription
+        ProxyPassReverse /manage-subscription  http://localhost:8255/manage-subscription
+
+	ProxyPass /fetch-invoice  http://localhost:8128/fetch-invoice
+        ProxyPassReverse /fetch-invoice  http://localhost:8128/fetch-invoice
+
+	ProxyPass /paymentRequest/  http://localhost:8086/paymentRequest
+	ProxyPassReverse /paymentRequest/  http://localhost:8086/paymentRequest
+
+	ProxyPass /xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+	ProxyPassReverse /xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+
+        ProxyPass /PHIX/paymentRequest/  http://localhost:8086/paymentRequest/PHIX/
+        ProxyPassReverse /xpg/paymentRequest/  http://localhost:8086/paymentRequest/PHIX/
+
+        ProxyPass /PHIX/paymentResponse/  http://localhost:8086/paymentResponse/PHIX/
+        ProxyPassReverse /xpg/paymentResponse/  http://localhost:8086/paymentResponse/PHIX/
+
+        ProxyPass /ARKANSA/paymentRequest/  http://localhost:8086/paymentRequest/ARKANSA/
+        ProxyPassReverse /xpg/paymentRequest/  http://localhost:8086/paymentRequest/ARKANSA/
+
+        ProxyPass /ARKANSA/paymentResponse/  http://localhost:8086/paymentResponse/ARKANSA/
+        ProxyPassReverse /xpg/paymentResponse/  http://localhost:8086/paymentResponse/ARKANSA/
+
+	ProxyPass /mq  http://localhost:15672
+	ProxyPassReverse /mq  http://localhost:15672
+
+	ProxyPass /wpg-ui  http://localhost:8086/wpg-ui
+        ProxyPassReverse /wpg-ui  http://localhost:8086/wpg-ui
+
+        ProxyPass /xpg/wpg-int  http://localhost:8086/wpg-int
+        ProxyPassReverse /xpg/wpg-int  http://localhost:8086/wpg-int
+
+
+	ProxyPass /notification-prefs  http://localhost:8122/notification-prefs
+        ProxyPassReverse /notification-prefs  http://localhost:8122/notification-prefs
+
+        ProxyPass /notification  http://localhost:8122/notification
+        ProxyPassReverse /notification  http://localhost:8122/notification
+               
+
+	ProxyPass /financials/api/delinquency/admin/exceptions http://localhost:8114/delinquency/admin/exceptions
+	ProxyPassReverse /financials/api/delinquency/admin/exceptions http://localhost:8114/delinquency/admin/exceptions
+
+	ProxyPass /financials/api/delinquency http://localhost:8990/delinquency
+	ProxyPassReverse /financials/api/delinquency http://localhost:8990/delinquency
+
+
+
+	ProxyPass /appGateway  http://localhost:8100/
+        ProxyPassReverse /appGateway  http://localhost:8100/
+</VirtualHost>
+
+
+<VirtualHost *:80>
+	ServerName <%= node['hc_apache']['wfm']['virtualhost']['portal']['play_domain'] %>
+
+	BrowserMatch "MSIE [2-6]" \
+					nokeepalive ssl-unclean-shutdown \
+					downgrade-1.0 force-response-1.0
+	# MSIE 7 and newer should be able to use keepalive
+	BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+	ProxyPreserveHost On
+
+	DocumentRoot /usr/local/applications/wfm
+
+	Alias /web/ "/usr/local/applications/wfm/ui/wfm-ui/"
+	<Directory "/usr/local/applications/wfm/ui/wfm-ui/" >
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all granted
+	</Directory>
+	Alias /xpgApp/ "/usr/local/applications/wfm/ws/app-gateway/ui-assets/xpgApp/"
+	<Directory "/usr/local/applications/wfm/ws/app-gateway/ui-assets/xpgApp/" >
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all granted
+	</Directory>
+
+	ProxyPreserveHost On
+	
+	ProxyPassReverseCookieDomain .localhost .<%= node['hc_apache']['wfm']['virtualhost']['portal']['play_domain'] %>
+	ProxyPassReverseCookieDomain localhost <%= node['hc_apache']['wfm']['virtualhost']['portal']['play_domain'] %>
+
+	ProxyPass /web !
+	ProxyPass /xpgApp !
+	
+	ProxyPass /company/user-management  http://localhost:8001/user-management/company
+	ProxyPassReverse /company/user-management  http://localhost:8001/user-management/company
+
+	ProxyPass /company/security  http://localhost:8001/security/company
+	ProxyPassReverse /ARKANSAS/security  http://localhost:8001/security/company
+
+	ProxyPass /ARKANSAS/user-management  http://localhost:8001/user-management/ARKANSAS
+        ProxyPassReverse /ARKANSAS/user-management  http://localhost:8001/user-management/ARKANSAS
+
+        ProxyPass /ARKANSAS/security  http://localhost:8001/security/ARKANSAS
+        ProxyPassReverse /ARKANSAS/security  http://localhost:8001/security/ARKANSAS
+
+	ProxyPass /financials/api/security  http://localhost:8001/security
+    ProxyPassReverse /financials/api/security  http://localhost:8001/security
+
+    ProxyPass /financials/api/user-management  http://localhost:8001/user-management
+    ProxyPassReverse /financials/api/user-management  http://localhost:8001/user-management
+	
+	ProxyPass /financials/api/invoice-review  http://localhost:8114/invoice-review
+	ProxyPassReverse /financials/api/invoice-review  http://localhost:8114/invoice-review
+
+	ProxyPass /financials/api/security/user/current  http://localhost:8001/security/user/current
+	ProxyPassReverse /financials/api/security/user/current  http://localhost:8001/security/user/current
+
+    ProxyPass /financials/api/contracts  http://localhost:8255/contracts
+	ProxyPassReverse /financials/api/contracts  http://localhost:8255/contracts
+
+	ProxyPass /financials/api/configurations http://localhost:8100/configurations
+	ProxyPassReverse /financials/api/configurations  http://localhost:8100/configurations
+
+	ProxyPass /financials/api/fetchCustomer  http://localhost:8110/fetchCustomer
+	ProxyPassReverse /financials/api/fetchCustomer  http://localhost:8110/fetchCustomer
+
+	ProxyPass /financials/api/account-statements  http://localhost:8301/account-statements
+	ProxyPassReverse /financials/api/account-statements  http://localhost:8301/account-statements
+
+	ProxyPass /financials/api/invoices  http://localhost:8255/invoices
+	ProxyPassReverse /financials/api/invoices  http://localhost:8255/invoices
+
+	ProxyPass /financials/api/manage-payments  http://localhost:8103/manage-payments
+	ProxyPassReverse /financials/api/manage-payments  http://localhost:8103/manage-payments
+
+	ProxyPass /financials/api/write-off  http://localhost:8103/write-off
+	ProxyPassReverse /financials/api/write-off  http://localhost:8103/write-off
+
+	ProxyPass /financials/api/writeon-rules  http://localhost:8114/writeon-rules
+	ProxyPassReverse /financials/api/writeon-rules  http://localhost:8114/writeon-rules
+
+	ProxyPass /financials/api/dms  http://localhost:8081/dms
+	ProxyPassReverse /financials/api/dms  http://localhost:8081/dms
+
+	ProxyPass /financials/api/mps  http://localhost:8106/mps
+	ProxyPassReverse /financials/api/mps  http://localhost:8106/mps
+
+	ProxyPass /financials/api/reports  http://localhost:8302/reports
+	ProxyPassReverse /financials/api/reports  http://localhost:8302/reports
+
+	ProxyPass /financials/api/cust-summary  http://localhost:8255/cust-summary
+	ProxyPassReverse /financials/api/cust-summary  http://localhost:8255/cust-summary
+
+	ProxyPass /financials/api/bem http://localhost:8113/bem
+	ProxyPassReverse /financials/api/bem http://localhost:8113/bem
+
+	ProxyPass /financials/api/billing-policies http://localhost:8114/billing-policies
+	ProxyPassReverse /financials/api/billing-policies http://localhost:8114/billing-policies
+
+	ProxyPass /financials/api/rules  http://localhost:8114/rules
+	ProxyPassReverse /financials/api/rules  http://localhost:8114/rules
+
+	ProxyPass /financials/api/ftrules http://localhost:8114/ftrules
+	ProxyPassReverse /financials/api/ftrules http://localhost:8114/ftrules
+
+	ProxyPass /financials/api/fetchItemDetail  http://localhost:8150/fetchItemDetail
+	ProxyPassReverse /financials/api/fetchItemDetail  http://localhost:8150/fetchItemDetail
+
+	ProxyPass /financials/api/manageaccount  http://localhost:8216/manageaccount
+	ProxyPassReverse /financials/api/manageaccount  http://localhost:8216/manageaccount
+
+	ProxyPass /financials/api/rules  http://localhost:8114/rules
+	ProxyPassReverse /financials/api/rules  http://localhost:8114/rules
+
+	ProxyPass /financials/api/ft  http://localhost:8124/ft
+	ProxyPassReverse /financials/api/ft  http://localhost:8124/ft
+
+	ProxyPass /financials/api/items  http://localhost:8150/items
+	ProxyPassReverse /financials/api/items  http://localhost:8150/items
+
+	ProxyPass /financials/api/create  http://localhost:8150/create
+	ProxyPassReverse /financials/api/create  http://localhost:8150/create
+
+	ProxyPass /financials/api/glaccounts http://localhost:8216/glaccounts
+	ProxyPassReverse /financials/api/glaccounts http://localhost:8216/glaccounts
+
+	ProxyPass /financials/api/ftrules http://localhost:8114/ftrules
+	ProxyPassReverse /financials/api/ftrules http://localhost:8114/ftrules
+
+	ProxyPass /financials/api/billing/policy/remittances  http://localhost:8114/billing/policy/remittances
+	ProxyPassReverse /financials/api/billing/policy/remittances  http://localhost:8114/billing/policy/remittances
+
+	ProxyPass /financials/api/wfm-invoice  http://localhost:8128/wfm-invoice
+	ProxyPassReverse /financials/api/wfm-invoice  http://localhost:8128/wfm-invoice
+
+	ProxyPass /financials/api/billing-run-cycle  http://localhost:8125/billing-run-cycle
+	ProxyPassReverse /financials/api/billing-run-cycle  http://localhost:8125/billing-run-cycle
+
+	ProxyPass /financials/api/remit-advice-cycle  http://localhost:8126/remit-advice-cycle
+	ProxyPassReverse /financials/api/remit-advice-cycle  http://localhost:8126/remit-advice-cycle
+
+	ProxyPass /financials/api/remit-advice  http://localhost:8129/remit-advice
+	ProxyPassReverse /financials/api/remit-advice  http://localhost:8129/remit-advice
+
+	ProxyPass /financials/api/imports  http://localhost:8150/imports
+	ProxyPassReverse /financials/api/imports  http://localhost:8150/imports
+
+	ProxyPass /financials/api/user-management  http://localhost:8001/user-management
+	ProxyPassReverse /financials/api/user-management  http://localhost:8001/user-management
+
+	ProxyPass /financials/api/registration  http://localhost:8001/registration
+	ProxyPassReverse /financials/api/registration  http://localhost:8001/registration
+
+	ProxyPass /financials/api/remits  http://localhost:8130/remits
+	ProxyPassReverse /financials/api/remits  http://localhost:8130/remits
+
+	ProxyPass /financials/api/manage-subscription  http://localhost:8255/manage-subscription
+	ProxyPassReverse /financials/api/manage-subscription  http://localhost:8255/manage-subscription
+
+	ProxyPass /financials/api/fetch-invoice  http://localhost:8128/fetch-invoice
+	ProxyPassReverse /financials/api/fetch-invoice  http://localhost:8128/fetch-invoice
+
+	ProxyPass /financials/api/paymentRequest/  http://localhost:8086/paymentRequest
+	ProxyPassReverse /financials/api/paymentRequest/  http://localhost:8086/paymentRequest
+
+	ProxyPass /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+	ProxyPassReverse /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+
+	ProxyPass /financials/api/PHIX/paymentRequest/  http://localhost:8086/paymentRequest/PHIX/
+	ProxyPassReverse /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/PHIX/
+
+	ProxyPass /financials/api/PHIX/paymentResponse/  http://localhost:8086/paymentResponse/PHIX/
+	ProxyPassReverse /financials/api/xpg/paymentResponse/  http://localhost:8086/paymentResponse/PHIX/
+
+	ProxyPass /financials/api/ARKANSA/paymentRequest/  http://localhost:8086/paymentRequest/ARKANSA/
+	ProxyPassReverse /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/ARKANSA/
+
+	ProxyPass /financials/api/ARKANSA/paymentResponse/  http://localhost:8086/paymentResponse/ARKANSA/
+	ProxyPassReverse /financials/api/xpg/paymentResponse/  http://localhost:8086/paymentResponse/ARKANSA/
+
+	ProxyPass /financials/api/mq  http://localhost:15672
+	ProxyPassReverse /financials/api/mq  http://localhost:15672
+
+	ProxyPass /financials/api/wpg-ui  http://localhost:8086/wpg-ui
+	ProxyPassReverse /financials/api/wpg-ui  http://localhost:8086/wpg-ui
+
+	ProxyPass /financials/api/xpg/wpg-int  http://localhost:8086/wpg-int
+	ProxyPassReverse /financials/api/xpg/wpg-int  http://localhost:8086/wpg-int
+
+	ProxyPass /financials/api/notification-prefs  http://localhost:8122/notification-prefs
+	ProxyPassReverse /financials/api/notification-prefs  http://localhost:8122/notification-prefs
+
+	ProxyPass /financials/api/notification  http://localhost:8122/notification
+	ProxyPassReverse /financials/api/notification  http://localhost:8122/notification
+               
+
+	ProxyPass /financials/api/delinquency/admin/exceptions  http://localhost:8114/delinquency/admin/exceptions
+	ProxyPassReverse /financials/api/delinquency/admin/exceptions  http://localhost:8114/delinquency/admin/exceptions
+
+	ProxyPass /financials/api/appGateway  http://localhost:8100/
+	ProxyPassReverse /financials/api/appGateway  http://localhost:8100/
+	
+	ProxyPass /financials/api/manual-adjustment  http://localhost:8216/manual-adjustment
+	ProxyPassReverse /financials/api/manual-adjustment  http://localhost:8216/manual-adjustment	
+	# API mappings end
+
+	ProxyPass /HIXSHOPA/user-management  http://localhost:8001/user-management/HIXSHOPA
+	ProxyPassReverse /HIXSHOPA/user-management  http://localhost:8001/user-management/HIXSHOPA
+	
+	ProxyPass /HIXSHOPA/security  http://localhost:8001/security/HIXSHOPA
+	ProxyPassReverse /HIXSHOPA/security  http://localhost:8001/security/HIXSHOPA
+
+	ProxyPass /security  http://localhost:8001/security
+	ProxyPassReverse /security  http://localhost:8001/security
+	
+	ProxyPass /  http://localhost:8100/
+	ProxyPassReverse /  http://localhost:8100/
+</VirtualHost>
+
+
+<VirtualHost *:80>
+	ServerName <%= node['hc_apache']['wfm']['virtualhost']['portal']['payments_domain'] %>
+
+	BrowserMatch "MSIE [2-6]" \
+				nokeepalive ssl-unclean-shutdown \
+				downgrade-1.0 force-response-1.0
+	# MSIE 7 and newer should be able to use keepalive
+	BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+	ProxyPreserveHost On
+
+	DocumentRoot /usr/local/applications/wfm
+
+	Alias /web/ "/usr/local/applications/wfm/ui/wfm-ui/"
+	<Directory "/usr/local/applications/wfm/ui/wfm-ui/" >
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all granted
+	</Directory>
+
+	Alias /xpgApp/ "/usr/local/applications/wfm/ws/app-gateway/ui-assets/xpgApp/"
+	<Directory "/usr/local/applications/wfm/ws/app-gateway/ui-assets/xpgApp/" >
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+	    Require all granted
+	</Directory>
+
+	Alias /xpgui/ "/usr/local/applications/wfm/ws/xpg-ui/"
+	<Directory "/usr/local/applications/wfm/ws/xpg-ui/" >
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+	    Require all granted
+	</Directory>
+
+	ProxyPreserveHost On
+	
+	ProxyPassReverseCookieDomain .localhost .<%= node['hc_apache']['wfm']['virtualhost']['portal']['payments_domain'] %>
+	ProxyPassReverseCookieDomain localhost <%= node['hc_apache']['wfm']['virtualhost']['portal']['payments_domain'] %>
+
+	ProxyPass /web !
+	ProxyPass /xpgApp !
+
+	# API mappings begin
+	ProxyPass /financials/api/security  http://localhost:8001/security
+	ProxyPassReverse /financials/api/security  http://localhost:8001/security
+
+	ProxyPass /financials/api/user-management  http://localhost:8001/user-management
+	ProxyPassReverse /financials/api/user-management  http://localhost:8001/user-management
+	
+	ProxyPass /financials/api/invoice-review  http://localhost:8114/invoice-review
+	ProxyPassReverse /financials/api/invoice-review  http://localhost:8114/invoice-review
+
+	ProxyPass /financials/api/security/user/current  http://localhost:8001/security/user/current
+	ProxyPassReverse /financials/api/security/user/current  http://localhost:8001/security/user/current
+
+	ProxyPass /financials/api/contracts  http://localhost:8255/contracts
+	ProxyPassReverse /financials/api/contracts  http://localhost:8255/contracts
+
+	ProxyPass /financials/api/configurations http://localhost:8100/configurations
+	ProxyPassReverse /financials/api/configurations  http://localhost:8100/configurations
+
+	ProxyPass /financials/api/fetchCustomer  http://localhost:8110/fetchCustomer
+	ProxyPassReverse /financials/api/fetchCustomer  http://localhost:8110/fetchCustomer
+
+	ProxyPass /financials/api/account-statements  http://localhost:8301/account-statements
+	ProxyPassReverse /financials/api/account-statements  http://localhost:8301/account-statements
+
+	ProxyPass /financials/api/invoices  http://localhost:8255/invoices
+	ProxyPassReverse /financials/api/invoices  http://localhost:8255/invoices
+
+	ProxyPass /financials/api/manage-payments  http://localhost:8103/manage-payments
+	ProxyPassReverse /financials/api/manage-payments  http://localhost:8103/manage-payments
+
+	ProxyPass /financials/api/write-off  http://localhost:8103/write-off
+	ProxyPassReverse /financials/api/write-off  http://localhost:8103/write-off
+
+	ProxyPass /financials/api/writeon-rules  http://localhost:8114/writeon-rules
+	ProxyPassReverse /financials/api/writeon-rules  http://localhost:8114/writeon-rules
+
+	ProxyPass /financials/api/dms  http://localhost:8081/dms
+	ProxyPassReverse /financials/api/dms  http://localhost:8081/dms
+
+	ProxyPass /financials/api/mps  http://localhost:8106/mps
+	ProxyPassReverse /financials/api/mps  http://localhost:8106/mps
+
+	ProxyPass /financials/api/reports  http://localhost:8302/reports
+	ProxyPassReverse /financials/api/reports  http://localhost:8302/reports
+
+	ProxyPass /financials/api/cust-summary  http://localhost:8255/cust-summary
+	ProxyPassReverse /financials/api/cust-summary  http://localhost:8255/cust-summary
+
+	ProxyPass /financials/api/bem http://localhost:8113/bem
+	ProxyPassReverse /financials/api/bem http://localhost:8113/bem
+
+	ProxyPass /financials/api/billing-policies http://localhost:8114/billing-policies
+	ProxyPassReverse /financials/api/billing-policies http://localhost:8114/billing-policies
+
+	ProxyPass /financials/api/rules  http://localhost:8114/rules
+	ProxyPassReverse /financials/api/rules  http://localhost:8114/rules
+
+	ProxyPass /financials/api/ftrules http://localhost:8114/ftrules
+	ProxyPassReverse /financials/api/ftrules http://localhost:8114/ftrules
+
+	ProxyPass /financials/api/fetchItemDetail  http://localhost:8150/fetchItemDetail
+	ProxyPassReverse /financials/api/fetchItemDetail  http://localhost:8150/fetchItemDetail
+
+	ProxyPass /financials/api/manageaccount  http://localhost:8216/manageaccount
+	ProxyPassReverse /financials/api/manageaccount  http://localhost:8216/manageaccount
+
+	ProxyPass /financials/api/rules  http://localhost:8114/rules
+	ProxyPassReverse /financials/api/rules  http://localhost:8114/rules
+
+	ProxyPass /financials/api/ft  http://localhost:8124/ft
+	ProxyPassReverse /financials/api/ft  http://localhost:8124/ft
+
+	ProxyPass /financials/api/items  http://localhost:8150/items
+	ProxyPassReverse /financials/api/items  http://localhost:8150/items
+
+	ProxyPass /financials/api/create  http://localhost:8150/create
+	ProxyPassReverse /financials/api/create  http://localhost:8150/create
+
+	ProxyPass /financials/api/glaccounts http://localhost:8216/glaccounts
+	ProxyPassReverse /financials/api/glaccounts http://localhost:8216/glaccounts
+
+	ProxyPass /financials/api/ftrules http://localhost:8114/ftrules
+	ProxyPassReverse /financials/api/ftrules http://localhost:8114/ftrules
+
+	ProxyPass /financials/api/billing/policy/remittances  http://localhost:8114/billing/policy/remittances
+	ProxyPassReverse /financials/api/billing/policy/remittances  http://localhost:8114/billing/policy/remittances
+
+	ProxyPass /financials/api/wfm-invoice  http://localhost:8128/wfm-invoice
+	ProxyPassReverse /financials/api/wfm-invoice  http://localhost:8128/wfm-invoice
+
+	ProxyPass /financials/api/billing-run-cycle  http://localhost:8125/billing-run-cycle
+	ProxyPassReverse /financials/api/billing-run-cycle  http://localhost:8125/billing-run-cycle
+
+	ProxyPass /financials/api/remit-advice-cycle  http://localhost:8126/remit-advice-cycle
+	ProxyPassReverse /financials/api/remit-advice-cycle  http://localhost:8126/remit-advice-cycle
+
+	ProxyPass /financials/api/remit-advice  http://localhost:8129/remit-advice
+	ProxyPassReverse /financials/api/remit-advice  http://localhost:8129/remit-advice
+
+	ProxyPass /financials/api/imports  http://localhost:8150/imports
+	ProxyPassReverse /financials/api/imports  http://localhost:8150/imports
+
+	ProxyPass /financials/api/user-management  http://localhost:8001/user-management
+	ProxyPassReverse /financials/api/user-management  http://localhost:8001/user-management
+
+	ProxyPass /financials/api/registration  http://localhost:8001/registration
+	ProxyPassReverse /financials/api/registration  http://localhost:8001/registration
+
+	ProxyPass /financials/api/remits  http://localhost:8130/remits
+	ProxyPassReverse /financials/api/remits  http://localhost:8130/remits
+
+	ProxyPass /financials/api/manage-subscription  http://localhost:8255/manage-subscription
+	ProxyPassReverse /financials/api/manage-subscription  http://localhost:8255/manage-subscription
+
+	ProxyPass /financials/api/fetch-invoice  http://localhost:8128/fetch-invoice
+	ProxyPassReverse /financials/api/fetch-invoice  http://localhost:8128/fetch-invoice
+
+	ProxyPass /financials/api/paymentRequest/  http://localhost:8086/paymentRequest
+	ProxyPassReverse /financials/api/paymentRequest/  http://localhost:8086/paymentRequest
+
+	ProxyPass /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+	ProxyPassReverse /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+
+	ProxyPass /financials/api/PHIX/paymentRequest/  http://localhost:8086/paymentRequest/PHIX/
+	ProxyPassReverse /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/PHIX/
+
+	ProxyPass /financials/api/PHIX/paymentResponse/  http://localhost:8086/paymentResponse/PHIX/
+	ProxyPassReverse /financials/api/xpg/paymentResponse/  http://localhost:8086/paymentResponse/PHIX/
+
+	ProxyPass /financials/api/ARKANSA/paymentRequest/  http://localhost:8086/paymentRequest/ARKANSA/
+	ProxyPassReverse /financials/api/xpg/paymentRequest/  http://localhost:8086/paymentRequest/ARKANSA/
+
+	ProxyPass /financials/api/ARKANSA/paymentResponse/  http://localhost:8086/paymentResponse/ARKANSA/
+	ProxyPassReverse /financials/api/xpg/paymentResponse/  http://localhost:8086/paymentResponse/ARKANSA/
+
+	ProxyPass /financials/api/mq  http://localhost:15672
+	ProxyPassReverse /financials/api/mq  http://localhost:15672
+
+	ProxyPass /financials/api/wpg-ui  http://localhost:8086/wpg-ui
+	ProxyPassReverse /financials/api/wpg-ui  http://localhost:8086/wpg-ui
+
+	ProxyPass /financials/api/xpg/wpg-int  http://localhost:8086/wpg-int
+	ProxyPassReverse /financials/api/xpg/wpg-int  http://localhost:8086/wpg-int
+
+	ProxyPass /financials/api/notification-prefs  http://localhost:8122/notification-prefs
+	ProxyPassReverse /financials/api/notification-prefs  http://localhost:8122/notification-prefs
+
+	ProxyPass /financials/api/notification  http://localhost:8122/notification
+	ProxyPassReverse /financials/api/notification  http://localhost:8122/notification
+               
+
+	ProxyPass /financials/api/delinquency/admin/exceptions  http://localhost:8114/delinquency/admin/exceptions
+	ProxyPassReverse /financials/api/delinquency/admin/exceptions  http://localhost:8114/delinquency/admin/exceptions
+	
+	ProxyPass /financials/api/delinquency  http://localhost:8990/delinquency
+	ProxyPassReverse /financials/api/delinquency  http://localhost:8990/delinquency
+
+
+	ProxyPass /financials/api/appGateway  http://localhost:8100/
+	ProxyPassReverse /financials/api/appGateway  http://localhost:8100/
+	# API mappings end
+        
+        ProxyPass /HIXSHOPA/user-management  http://localhost:8001/user-management/HIXSHOPA
+	ProxyPassReverse /HIXSHOPA/user-management  http://localhost:8001/user-management/HIXSHOPA
+	
+	ProxyPass /HIXSHOPA/security  http://localhost:8001/security/HIXSHOPA
+	ProxyPassReverse /HIXSHOPA/security  http://localhost:8001/security/HIXSHOPA
+
+	ProxyPass /security  http://localhost:8001/security
+        ProxyPassReverse /security  http://localhost:8001/security
+        
+        ProxyPass /xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+        ProxyPassReverse /xpg/paymentRequest/  http://localhost:8086/paymentRequest/
+
+        ProxyPass /xpg/paymentResponse/  http://localhost:8086/paymentResponse/
+        ProxyPassReverse /xpg/paymentResponse/  http://localhost:8086/paymentResponse/
+
+	ProxyPass /mock-wpg/  http://localhost:8401/mock-wpg/
+        ProxyPassReverse /mock-wpg/  http://localhost:8401/mock-wpg/
+
+        ProxyPass /  http://localhost:8100/
+        ProxyPassReverse /  http://localhost:8100/
+
+</VirtualHost>
+

@@ -1,0 +1,18 @@
+#!/bin/sh
+export JAVA_OPTS="-Djava.awt.headless=true -Xmx8192m -Xms8192m -XX:MaxPermSize=2048m"
+case "$1" in
+start)
+  sudo su tomcat7 -c "export JAVA_OPTS=\"-Djava.awt.headless=true -Xmx8192m -Xms8192m -XX:MaxPermSize=2048m\";/usr/local/tomcat7/bin/startup.sh"
+;;
+stop)
+  sudo su tomcat7 -c "export JAVA_OPTS=\"-Djava.awt.headless=true -Xmx8192m -Xms8192m -XX:MaxPermSize=2048m\";/usr/local/tomcat7/bin/shutdown.sh"
+;;
+restart)
+  sudo su tomcat7 -c "export JAVA_OPTS=\"-Djava.awt.headless=true -Xmx8192m -Xms8192m -XX:MaxPermSize=2048m\";/usr/local/tomcat7/bin/shutdown.sh"
+  sleep 10
+  sudo su tomcat7 -c "for i in `ps -ef | grep tomcat7 | grep org.apache.catalina.startup.Bootstrap | cut -d" " -f3`; do kill -9 $i; done"
+  sudo su tomcat7 -c "export JAVA_OPTS=\"-Djava.awt.headless=true -Xmx8192m -Xms8192m -XX:MaxPermSize=2048m\";/usr/local/tomcat7/bin/startup.sh"
+;;
+*)
+  echo "Syntax: $0 <start|stop>"
+esac

@@ -1,0 +1,51 @@
+<VirtualHost *:80>
+  ServerName <%= node['ipaddress'] %>
+  RewriteEngine on
+  SetEnvIf Host (.*) custom_host=$1
+         RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS|PUT|DELETE)
+         RewriteRule .* - [F]
+       #For Apache 2.4
+       Header edit Set-Cookie "(?i)^((?:(?!;\s?HttpOnly).)+)$" "$1; HttpOnly"
+       Header edit Set-Cookie "(?i)^((?:(?!;\s?Secure).)+)$" "$1; Secure"
+       Header always append X-Frame-Options SAMEORIGIN
+       Header set Strict-Transport-Security "max-age=31536000; includeSubDomains;"
+          Header set  X-XSS-Protection "1; mode=block"
+           Header set  X-Content-Type-Options nosniff
+          Header set  Access-Control-Allow-Origin "https://%{custom_host}e"
+  #    Header unset Pragma
+   #   Header set Cache-Control "no-cache, no-store"
+      LogLevel error
+        CacheEnable disk /
+
+        RequestHeader set X-VIRTUAL-HOST-NAME %{custom_host}e
+        ProxyPreserveHost On
+
+        ProxyPass /IDBUS http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8081/IDBUS
+        ProxyPassReverse /IDBUS http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8081/IDBUS
+        ProxyPass /IDBUS-UI http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8081/IDBUS-UI
+        ProxyPassReverse /IDBUS-UI http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8081/IDBUS-UI
+        ProxyPass /scimweb/saml/metadata !
+        ProxyPass /scimweb http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8080/scimweb
+        ProxyPassReverse /scimweb http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8080/scimweb
+        ProxyPass /scimweb https://<%= node['hc_tomcat']['proxyname'] %>:443/scimweb
+        ProxyPassReverse /scimweb https://<%= node['hc_tomcat']['proxyname'] %>/scimweb
+        ProxyPass /zendesk-sso-app http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8080/zendesk-sso-app
+        ProxyPassReverse /zendesk-sso-app http://<%= node['hc_apache']['virtualhost']['backend']['ip'] %>:8080/zendesk-sso-app
+        <Location ~ ^/scimweb/(idm|forgotPassword|sso|selfProfile)>
+#                ProxyErrorOverride Off
+                ErrorDocument 400 /error/sitedown.html
+                ErrorDocument 401 /error/sitedown.html
+                ErrorDocument 403 /error/sitedown.html
+                ErrorDocument 404 /error/sitedown.html
+                ErrorDocument 500 /error/sitedown.html
+        </Location>
+        <Location ~ ^/(IDBUS-UI|IDBUS)>
+ #               ProxyErrorOverride Off
+                ErrorDocument 400 /error/sitedown.html
+                ErrorDocument 401 /error/sitedown.html
+                ErrorDocument 403 /error/sitedown.html
+                ErrorDocument 404 /error/sitedown.html
+                ErrorDocument 500 /error/sitedown.html
+        </Location>
+
+</VirtualHost>

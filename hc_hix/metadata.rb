@@ -1,0 +1,7 @@
+name             'hc_hix'
+maintainer       'company'
+maintainer_email 'rohit.tiwari@company.com'
+license          'All rights reserved'
+description      'Installs/Configures hix'
+long_description 'Installs/Configures hix'
+version          '0.1.1'

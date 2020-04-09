@@ -1,0 +1,8 @@
+dn: ads-journalid=defaultJournal,ads-directoryServiceId=default,ou=config
+changetype: modify
+replace: ads-enabled
+ads-enabled: TRUE
+-
+replace: ads-journalworkingdir
+ads-journalworkingdir: <%= node['hc_apacheds']['install']['path'] %>/apacheds/instances/default/journal
+

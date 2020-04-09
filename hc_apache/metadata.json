@@ -1,0 +1,32 @@
+{
+  "name": "hc_apache",
+  "description": "Installs/Configures Apache",
+  "long_description": "hc_apache Cookbook\n================\nDescription\n===========\n\nThis is a wrapper cookbook for community cookbook **apache2**. Since community cookbook was restarting apache service using **:delayed** notification, Apache configuration was failing. To overcome that issue we, overrided those resources in wrapper cookbook to work it properly.\n\nBelow is the list of implementations supported by this cookbook.\n\n* arshop_hix\n* cp_phix\n* sso\n* wig_virtualhost.rb\n\nPlatforms\n=========\n\n* Debian/Ubuntu\n* RHEL\n\nDependencies\n============\n**apache2**\n\nUsage\n=======\nAs per pur requirement, we need to install below mentioned modules by default by apache installation. These modules are define in **attributes.rb** file\n* alias\n* filter\n* headers\n* include\n* log_config\n* mime \n* negotiation\n* rewrite\n* authz_core\n* authz_host \n* authz_user\n* authz_groupfile \n* authn_file\n* autoindex \n* deflate \n* dir \n* env \n* logio\n* negotiation \n* status\n* proxy \n* proxy_http \n* setenvif \n* ssl\n\nExtra modules can also be loaded thorugh attributes.rb file if required.\n\nBelow is the list of extra modules enabled for cp_phix implementation through role.\n\n    \"hc_apache\": {\n      \"extra_modules\": [\n        \"auth_basic\",\n        \"authn_core\",\n        \"cgid\",\n        \"proxy_balancer\",\n        \"proxy_connect\",\n        \"reqtimeout\",\n        \"slotmem_shm\",\n        \"access_compat\"\n      ]\n    }\n\n\nReferences\n====\nNA\n\nTODOS\n====\nNA\n\n",
+  "maintainer": "company",
+  "maintainer_email": "devops@company.com",
+  "license": "All rights reserved",
+  "platforms": {
+  },
+  "dependencies": {
+    "apache2": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.1.5",
+  "source_url": "",
+  "issues_url": ""
+}

@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# apacheds
+# processname: apacheds
+# chkconfig: 234 20 85
+# description:  Start up the ApacheDS server.
+
+
+RETVAL=$?
+APACHEDS_HOME="<%= node['hc_apacheds']['install']['path'] %>/apacheds"
+
+case "$1" in
+ start)
+        if [ -f $APACHEDS_HOME/bin/apacheds.sh ]; then
+                 echo $"Starting ApacheDS"
+               sudo su <%= node['hc_apacheds']['user'] %>  -c "$APACHEDS_HOME/bin/setenv.sh && $APACHEDS_HOME/bin/apacheds.sh start &> /dev/null 2>&1 &"
+        fi
+                 ;;
+ stop)
+        if [ -f $APACHEDS_HOME/bin/apacheds.sh ]; then
+                 echo $"Stopping ApacheDS"
+            sudo su <%= node['hc_apacheds']['user'] %> -c "$APACHEDS_HOME/bin/setenv.sh && $APACHEDS_HOME/bin/apacheds.sh stop &> /dev/null 2>&1 &"
+        fi
+;;
+ restart)
+         sudo su <%= node['hc_apacheds']['user'] %> -c "$APACHEDS_HOME/bin/setenv.sh && $APACHEDS_HOME/bin/apacheds.sh stop &> /dev/null 2>&1 &"
+       sudo su <%= node['hc_apacheds']['user'] %> -c "$APACHEDS_HOME/bin/setenv.sh && $APACHEDS_HOME/bin/apacheds.sh start &> /dev/null 2>&1 &"
+        ;;
+ *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit $RETVAL

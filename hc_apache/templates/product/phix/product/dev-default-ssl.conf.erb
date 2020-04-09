@@ -1,0 +1,41 @@
+<IfModule mod_ssl.c>
+
+<VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+        #Enter server name here eg. phix-dev17.demo.hcinternal.net
+        #ServerName  <Server name>
+        ServerName 
+
+        #Enter server alias for api here eg. *-api.phix-dev17.demo.hcinternal.net
+        #ServerAlias <Server alias api>
+        ServerAlias 
+
+        #Location can be absolute path or relative path to the ServerRoot.
+        #Refer to http://httpd.apache.org/docs/2.4/mod/core.html#include
+        Include /usr/local/phix/applications/config/apache-config/includes/external-integration.conf
+
+</VirtualHost>
+
+
+<VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+        #Enter server name here eg. phix-dev17.demo.hcinternal.net
+        #ServerName  <Server name>
+        ServerName
+
+        #Enter server alias here eg. *.phix-dev17.demo.hcinternal.net
+        #ServerAlias <Server alias>
+        ServerAlias 
+
+        #Location can be absolute path or relative path to the ServerRoot.
+        #Refer to http://httpd.apache.org/docs/2.4/mod/core.html#include
+        Include /usr/local/phix/applications/config/apache-config/includes/portals.conf
+
+</VirtualHost>
+
+</IfModule>
+
+#Location can be absolute path or relative path to the ServerRoot.
+#Refer to http://httpd.apache.org/docs/2.4/mod/core.html#include
+
+Include /usr/local/phix/applications/config/apache-config/includes/common.conf

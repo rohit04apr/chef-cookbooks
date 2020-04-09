@@ -1,0 +1,61 @@
+DocumentRoot /usr/local/phix/applications/
+
+Alias /external "/usr/local/phix/applications/external-integration/"
+
+<Directory "/usr/local/phix/applications/external-integration/">
+Options +MultiViews +Includes -Indexes
+AllowOverride All
+Order deny,allow
+Require all granted
+SSLRequire ( (%{SSL_CLIENT_S_DN_O} eq "AS"))
+</Directory>
+
+<FilesMatch "^\.ht">
+Order allow,deny
+Require all denied
+Satisfy All
+</FilesMatch>
+
+RewriteEngine on
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)
+RewriteRule .* - [F,L]
+
+ErrorDocument 400 /staticContent/apache/error.html
+ErrorDocument 401 /staticContent/apache/forbidden.html
+ErrorDocument 403 /staticContent/apache/forbidden.html
+ErrorDocument 404 /staticContent/apache/resourceNotFound.html
+ErrorDocument 500 /staticContent/apache/siteDown.html
+ErrorDocument 503 /staticContent/apache/siteDown.html
+
+ErrorLog ${APACHE_LOG_DIR}/api_error.log
+LogLevel debug
+
+CustomLog ${APACHE_LOG_DIR}/api_ssl_access.log combined
+
+SSLEngine on
+SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+SSLVerifyClient require
+
+SSLCACertificateFile /etc/ssl/certs/ca-bundle.cer
+
+
+Header unset Strict-Transport-Security
+Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+Header unset Pragma
+
+FileETag None
+Header unset ETag
+Header set Cache-Control "no-cache, no-store"
+
+ProxyRequests Off
+ProxyPreserveHost On
+ProxyPass /external ajp://localhost:8009/external
+ProxyPassReverse /external http://localhost:8009/external
+SSLProxyEngine On
+
+SetEnvIf Host "^(.*)-api.*$" CLIENT_NAME=$1
+
+RequestHeader unset exchange-id
+RequestHeader set  exchange-id %{CLIENT_NAME}e

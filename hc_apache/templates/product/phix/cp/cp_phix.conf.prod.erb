@@ -1,0 +1,650 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	#Enter server name here eg. phix-dev17.demo.hcinternal.net
+	ServerName  <%= node['hc_apache']['phix']['cp']['conf']['base_domain'] %>
+
+	
+	#Enter server alias for api here eg. *-api.phix-dev17.demo.hcinternal.net
+	ServerAlias *-api.<%= node['hc_apache']['phix']['cp']['conf']['base_domain'] %>
+
+
+	DocumentRoot /usr/local/phix/applications/
+
+	Alias /external "/usr/local/phix/applications/external-integration/"
+    
+	<Directory "/usr/local/phix/applications/external-integration/">
+		Options +MultiViews +Includes -Indexes
+		AllowOverride All
+		Order deny,allow
+		Require all granted
+	</Directory>
+        
+	<FilesMatch "^\.ht">
+                Order allow,deny
+                Require all denied
+                Satisfy All
+     </FilesMatch>
+	
+	RewriteEngine on
+	RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)
+	RewriteRule .* - [F,L]
+
+	ErrorDocument 400 /staticContent/apache/error.html
+	ErrorDocument 401 /staticContent/apache/forbidden.html
+	ErrorDocument 403 /staticContent/apache/forbidden.html
+	ErrorDocument 404 /staticContent/apache/resourceNotFound.html
+	ErrorDocument 500 /staticContent/apache/siteDown.html
+	ErrorDocument 503 /staticContent/apache/siteDown.html
+
+	ErrorLog ${APACHE_LOG_DIR}/api_error.log
+	LogLevel debug
+
+	CustomLog ${APACHE_LOG_DIR}/api_ssl_access.log combined
+
+        
+
+	Header unset Strict-Transport-Security
+	Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+	Header unset Pragma
+	
+	FileETag None
+	Header unset ETag
+	Header set Cache-Control "no-cache, no-store"
+
+	ProxyRequests Off
+	ProxyPreserveHost On
+	ProxyPass /external ajp://localhost:8009/external
+	ProxyPassReverse /external http://localhost:8009/external
+    
+	SetEnvIf Host "^(.*)-api.*$" CLIENT_NAME=$1
+    
+	RequestHeader unset exchange-id
+	RequestHeader set  exchange-id %{CLIENT_NAME}e
+
+</VirtualHost>
+
+
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+	#Enter server name here eg. phix-dev17.demo.hcinternal.net
+	ServerName  <%= node['hc_apache']['phix']['cp']['conf']['base_domain'] %>
+
+	
+	#Enter server alias here eg. *.phix-dev17.demo.hcinternal.net
+	ServerAlias *.<%= node['hc_apache']['phix']['cp']['conf']['base_domain'] %>
+
+	
+	DocumentRoot /usr/local/phix/applications/
+
+	<Directory /usr/local/phix/applications/ >
+		Order deny,allow
+		Options -Indexes
+        Require all granted
+	</Directory>
+
+	<Directory /usr/local/cp/ >
+		Order deny,allow
+		Options -Indexes
+		Require all granted
+	</Directory>
+
+	Alias /individual "/usr/local/phix/applications/individual/"
+	Alias /employer "/usr/local/phix/applications/employer/"
+	Alias /employee "/usr/local/phix/applications/employee/"
+	Alias /broker "/usr/local/phix/applications/broker/"
+	Alias /exchange-admin "/usr/local/phix/applications/exchange-admin/"
+	Alias /de "/usr/local/phix/applications/de/"
+	Alias /phix-reports "/usr/local/phix/applications/phix-reports/"
+	Alias /staticContent/ /usr/local/phix/staticContent/
+	Alias /cp-reports "/usr/local/cp/applications/cp-reports/"
+
+
+
+
+
+	<LocationMatch "/(employer|individual|employee|broker|exchange-admin|de|phix-reports|cp-reports)/">
+		Options +Includes
+	</LocationMatch>
+
+	<Directory /usr/local/phix/staticContent/>
+        Order deny,allow
+		Options -Indexes +Includes +FollowSymLinks
+        Require all granted
+
+#---------------------------------------------------------------------------------------------
+#Configuration to add fall back resource from default folder if not present in tenant folder.
+#---------------------------------------------------------------------------------------------
+        RewriteEngine on
+        RewriteCond %{REQUEST_FILENAME} !/default/ [NC]
+		RewriteCond %{REQUEST_FILENAME} !-f [NC]
+		RewriteRule "(.*)/exchange/[^/]+/(.*)" /staticContent/$1/exchange/default/$2 [NC,NS,L]
+	</Directory>
+
+    <FilesMatch "^\.ht">
+            Order allow,deny
+            Deny from all
+            Satisfy All
+    </FilesMatch>
+	
+	RewriteEngine on
+	RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS) [OR]
+	RewriteCond %{REQUEST_URI} fusionchart[^\s]{0,}\.js [NC]
+	RewriteRule .* - [F]
+        RewriteCond %{REQUEST_URI} !^/individual.*
+        RewriteCond %{REQUEST_URI} !^/broker.*
+        RewriteCond %{REQUEST_URI} !^/employee.*
+        RewriteCond %{REQUEST_URI} !^/employer.*
+        RewriteCond %{REQUEST_URI} !^/exchange-admin.*
+        RewriteCond %{REQUEST_URI} !^/FFM.*
+        RewriteCond %{REQUEST_URI} !^/staticContent.*
+        RewriteCond %{REQUEST_URI} !^/cp-reports.*
+        RewriteCond %{REQUEST_URI} !^/de/.*
+
+	RewriteRule ^/(.*)$ /individual/my/$1 [R=301,L]
+
+	ErrorDocument 400 /staticContent/apache/error.html
+	ErrorDocument 401 /staticContent/apache/forbidden.html
+	ErrorDocument 403 /staticContent/apache/forbidden.html
+	ErrorDocument 404 /staticContent/apache/resourceNotFound.html
+	ErrorDocument 500 /staticContent/apache/error.html
+	ErrorDocument 502 /staticContent/apache/siteDown.html
+	ErrorDocument 503 /staticContent/apache/siteDown.html
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/ssl_access.log combined
+#	LogLevel info
+
+        
+	ProxyRequests Off
+	ProxyPreserveHost Off
+
+	ProxyPass /individual ajp://localhost:8009/individual
+    ProxyPassReverse /individual ajp://localhost:8009/individual
+		
+	ProxyPass /employer ajp://localhost:8009/employer
+    ProxyPassReverse /employer ajp://localhost:8009/employer
+		
+	ProxyPass /exchange-admin ajp://localhost:8009/exchange-admin
+    ProxyPassReverse /exchange-admin  ajp://localhost:8009/exchange-admin
+		
+	ProxyPass /broker  ajp://localhost:8009/broker
+    ProxyPassReverse /broker  ajp://localhost:8009/broker
+		
+	ProxyPass /employee ajp://localhost:8009/employee
+    ProxyPassReverse /employee  ajp://localhost:8009/employee
+		
+	ProxyPass /de ajp://localhost:8009/de
+    ProxyPassReverse /de ajp://localhost:8009/de
+	
+	ProxyPass /phix-reports ajp://localhost:8009/phix-reports
+    ProxyPassReverse /phix-reports  ajp://localhost:8009/phix-reports
+
+    ProxyPass /cp-reports ajp://localhost:8009/cp-reports
+	ProxyPassReverse /cp-reports ajp://localhost:8009/cp-reports
+    
+  #  SSLProxyEngine On
+#----------------------------------------------------------------------
+# Fixing mime type for favicon
+#----------------------------------------------------------------------
+
+<IfModule mod_mime.c>
+
+AddType image/x-icon cur ico
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Character encodings                                                |
+# ----------------------------------------------------------------------
+
+AddDefaultCharset utf-8
+
+# ######################################################################
+# # SECURITY                                                           #
+# ######################################################################
+
+# ----------------------------------------------------------------------
+# | Clickjacking                                                       |
+# ----------------------------------------------------------------------
+Header set X-Frame-Options "SAMEORIGIN"
+<FilesMatch "\.(css|eot|gif|ico|jpe?g|js|pdf|png|txt)$">
+        Header unset X-Frame-Options
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# | Content Security Policy (CSP)                                      |
+# ----------------------------------------------------------------------
+
+Header add Content-Security-Policy "default-src 'self' *.google-analytics.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png *.liveperson.net *.lpsnmedia.net va.v.liveperson.net hello.myfonts.net *.livechatinc.com 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: *.google-analytics.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png"
+
+
+
+
+#Header add Content-Security-Policy "default-src 'self' *.google-analytics.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png *.liveperson.net *.lpsnmedia.net va.v.liveperson.net 'unsafe-inline' 'unsafe-eval'" 
+<FilesMatch "\.(css|eot|gif|ico|jpe?g|js|pdf|png|txt)$">
+    Header unset Content-Security-Policy
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# | HTTP Strict Transport Security (HSTS)                              |
+# ----------------------------------------------------------------------
+
+Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+
+# ----------------------------------------------------------------------
+# | HTTP only cookies                               				   |
+# ----------------------------------------------------------------------
+
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+# ----------------------------------------------------------------------
+# | Reducing MIME type security risks                                  |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Reflected Cross-Site Scripting (XSS) attacks                       |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+    Header set X-XSS-Protection "1; mode=block"
+
+    <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+        Header unset X-XSS-Protection
+    </FilesMatch>
+
+</IfModule>
+# ######################################################################
+# # WEB PERFORMANCE                                                    #
+# ######################################################################
+
+# ----------------------------------------------------------------------
+# | Compression                                                        |
+# ----------------------------------------------------------------------
+
+<IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE "application/javascript" \
+                                      "application/json" \
+                                      "font/eot" \
+                                      "font/opentype" \
+                                      "image/bmp" \
+                                      "text/css" \
+                                      "text/html" \
+                                      "text/javascript" \
+                                      "text/plain"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Pragma                                                             |
+# ----------------------------------------------------------------------
+Header unset Pragma
+
+# ----------------------------------------------------------------------
+# | ETags                                                              |
+# ----------------------------------------------------------------------
+Header unset ETag
+FileETag None
+
+# ----------------------------------------------------------------------
+# | Expires headers                                                    |
+# ----------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+
+ExpiresActive on
+ExpiresDefault                                      "access plus 0 seconds"
+
+# CSS
+ExpiresByType text/css                              "access plus 1 year"
+
+# Data interchange
+
+ExpiresByType application/json                      "access plus 0 seconds"
+ExpiresByType application/xml                       "access plus 0 seconds"
+ExpiresByType text/xml                              "access plus 0 seconds"
+
+# Favicon (cannot be renamed!) and cursor images
+ExpiresByType image/vnd.microsoft.icon              "access plus 1 week"
+ExpiresByType image/x-icon                          "access plus 1 week"
+
+# HTML
+ExpiresByType text/html                             "access plus 0 seconds"
+
+# JavaScript
+ExpiresByType application/javascript                "access plus 1 year"
+ExpiresByType application/x-javascript              "access plus 1 year"
+ExpiresByType text/javascript                       "access plus 1 year"
+
+# Media files
+ExpiresByType image/bmp                             "access plus 8 hours"
+ExpiresByType image/gif                             "access plus 8 hours"
+ExpiresByType image/jpeg                            "access plus 8 hours"
+ExpiresByType image/png                             "access plus 8 hours"
+ExpiresByType image/svg+xml                         "access plus 8 hours"
+
+# Web fonts
+
+# Embedded OpenType (EOT)
+ExpiresByType application/vnd.ms-fontobject         "access plus 1 month"
+ExpiresByType font/eot                              "access plus 1 month"
+
+# OpenType
+ExpiresByType font/opentype                         "access plus 1 month"
+
+# TrueType
+ExpiresByType application/x-font-ttf                "access plus 1 month"
+
+# Web Open Font Format (WOFF) 1.0
+ExpiresByType application/font-woff                 "access plus 1 month"
+ExpiresByType application/x-font-woff               "access plus 1 month"
+ExpiresByType font/woff                             "access plus 1 month"
+
+# Web Open Font Format (WOFF) 2.0
+ExpiresByType application/font-woff2                "access plus 1 month"
+
+# Other
+ExpiresByType text/x-cross-domain-policy            "access plus 1 week"
+
+</IfModule>
+
+AddOutputFilterByType INCLUDES text/html
+SetOutputFilter INCLUDES
+
+SetEnvIf Host "^([^\.]+)\." CLIENT_NAME=$1
+
+</VirtualHost>
+
+<% if node[:hc_apache][:phix][:cp][:conf].attribute?(:server_client) -%>
+#Dynamically generating Virtual host configuration using chef!
+<% node['hc_apache']['phix']['cp']['conf']['server_client'].each do |srv, client| -%>
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+        ServerName  <%= srv %>
+        ServerAlias www.<%= srv %>
+        RequestHeader set host "<%= client %>.<%= node['hc_apache']['phix']['cp']['conf']['base_domain'] %>"
+        Header edit location "<%= client %>.<%= node['hc_apache']['phix']['cp']['conf']['base_domain'] %>" "www.<%= srv %>" 
+	DocumentRoot /usr/local/phix/applications/
+	<Directory /usr/local/phix/applications/ >
+		Order deny,allow
+		Options -Indexes
+        Require all granted
+	</Directory>
+
+	<Directory /usr/local/cp/ >
+		Order deny,allow
+		Options -Indexes
+		Require all granted
+	</Directory>
+
+	Alias /individual "/usr/local/phix/applications/individual/"
+	Alias /employer "/usr/local/phix/applications/employer/"
+	Alias /employee "/usr/local/phix/applications/employee/"
+	Alias /broker "/usr/local/phix/applications/broker/"
+	Alias /exchange-admin "/usr/local/phix/applications/exchange-admin/"
+	Alias /de "/usr/local/phix/applications/de/"
+	Alias /phix-reports "/usr/local/phix/applications/phix-reports/"
+	Alias /staticContent/ /usr/local/phix/staticContent/
+	Alias /cp-reports "/usr/local/cp/applications/cp-reports/"
+	<LocationMatch "/(employer|individual|employee|broker|exchange-admin|de|phix-reports|cp-reports)/">
+		Options +Includes
+	</LocationMatch>
+
+	<Directory /usr/local/phix/staticContent/>
+        Order deny,allow
+		Options -Indexes +Includes +FollowSymLinks
+        Require all granted
+
+#---------------------------------------------------------------------------------------------
+#Configuration to add fall back resource from default folder if not present in tenant folder.
+#---------------------------------------------------------------------------------------------
+        RewriteEngine on
+        RewriteCond %{REQUEST_FILENAME} !/default/ [NC]
+		RewriteCond %{REQUEST_FILENAME} !-f [NC]
+		RewriteRule "(.*)/exchange/[^/]+/(.*)" /staticContent/$1/exchange/default/$2 [NC,NS,L]
+	</Directory>
+
+    <FilesMatch "^\.ht">
+            Order allow,deny
+            Deny from all
+            Satisfy All
+    </FilesMatch>
+	
+	RewriteEngine on
+	RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS) [OR]
+	RewriteCond %{REQUEST_URI} fusionchart[^\s]{0,}\.js [NC]
+	RewriteRule .* - [F]
+
+	RewriteCond $1 !individual
+	RewriteCond $1 !broker
+	RewriteCond $1 !employee
+	RewriteCond $1 !employer
+	RewriteCond $1 !de
+	RewriteCond $1 !exchange-admin
+	RewriteCond $1 !FFM
+	RewriteCond $1 !staticContent
+	RewriteCond $1 !cp-reports
+	RewriteRule ^/(.*)$ /individual/my/$1 [R=301,L]
+
+	ErrorDocument 400 /staticContent/apache/error.html
+	ErrorDocument 401 /staticContent/apache/forbidden.html
+	ErrorDocument 403 /staticContent/apache/forbidden.html
+	ErrorDocument 404 /staticContent/apache/resourceNotFound.html
+	ErrorDocument 500 /staticContent/apache/error.html
+	ErrorDocument 502 /staticContent/apache/siteDown.html
+	ErrorDocument 503 /staticContent/apache/siteDown.html
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/ssl_access.log combined
+#	LogLevel info
+
+        
+	ProxyRequests Off
+	ProxyPreserveHost Off
+
+	ProxyPass /individual ajp://localhost:8009/individual
+    ProxyPassReverse /individual ajp://localhost:8009/individual
+		
+	ProxyPass /employer ajp://localhost:8009/employer
+    ProxyPassReverse /employer ajp://localhost:8009/employer
+		
+	ProxyPass /exchange-admin ajp://localhost:8009/exchange-admin
+    ProxyPassReverse /exchange-admin  ajp://localhost:8009/exchange-admin
+		
+	ProxyPass /broker  ajp://localhost:8009/broker
+    ProxyPassReverse /broker  ajp://localhost:8009/broker
+		
+	ProxyPass /employee ajp://localhost:8009/employee
+    ProxyPassReverse /employee  ajp://localhost:8009/employee
+		
+	ProxyPass /de ajp://localhost:8009/de
+    ProxyPassReverse /de ajp://localhost:8009/de
+	
+	ProxyPass /phix-reports ajp://localhost:8009/phix-reports
+    ProxyPassReverse /phix-reports  ajp://localhost:8009/phix-reports
+
+    ProxyPass /cp-reports ajp://localhost:8009/cp-reports
+	ProxyPassReverse /cp-reports ajp://localhost:8009/cp-reports
+    
+  #  SSLProxyEngine On
+#----------------------------------------------------------------------
+# Fixing mime type for favicon
+#----------------------------------------------------------------------
+
+<IfModule mod_mime.c>
+
+AddType image/x-icon cur ico
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Character encodings                                                |
+# ----------------------------------------------------------------------
+
+AddDefaultCharset utf-8
+
+# ######################################################################
+# # SECURITY                                                           #
+# ######################################################################
+
+# ----------------------------------------------------------------------
+# | Clickjacking                                                       |
+# ----------------------------------------------------------------------
+Header set X-Frame-Options "SAMEORIGIN"
+<FilesMatch "\.(css|eot|gif|ico|jpe?g|js|pdf|png|txt)$">
+        Header unset X-Frame-Options
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# | Content Security Policy (CSP)                                      |
+# ----------------------------------------------------------------------
+
+Header add Content-Security-Policy "default-src 'self' *.google-analytics.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png *.liveperson.net *.lpsnmedia.net va.v.liveperson.net hello.myfonts.net *.livechatinc.com 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: *.google-analytics.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png"
+
+
+
+
+#Header add Content-Security-Policy "default-src 'self' *.google-analytics.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png *.liveperson.net *.lpsnmedia.net va.v.liveperson.net 'unsafe-inline' 'unsafe-eval'" 
+<FilesMatch "\.(css|eot|gif|ico|jpe?g|js|pdf|png|txt)$">
+    Header unset Content-Security-Policy
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# | HTTP Strict Transport Security (HSTS)                              |
+# ----------------------------------------------------------------------
+
+Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+
+# ----------------------------------------------------------------------
+# | HTTP only cookies                               				   |
+# ----------------------------------------------------------------------
+
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+# ----------------------------------------------------------------------
+# | Reducing MIME type security risks                                  |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Reflected Cross-Site Scripting (XSS) attacks                       |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+    Header set X-XSS-Protection "1; mode=block"
+
+    <FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+        Header unset X-XSS-Protection
+    </FilesMatch>
+
+</IfModule>
+# ######################################################################
+# # WEB PERFORMANCE                                                    #
+# ######################################################################
+
+# ----------------------------------------------------------------------
+# | Compression                                                        |
+# ----------------------------------------------------------------------
+
+<IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE "application/javascript" \
+                                      "application/json" \
+                                      "font/eot" \
+                                      "font/opentype" \
+                                      "image/bmp" \
+                                      "text/css" \
+                                      "text/html" \
+                                      "text/javascript" \
+                                      "text/plain"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Pragma                                                             |
+# ----------------------------------------------------------------------
+Header unset Pragma
+
+# ----------------------------------------------------------------------
+# | ETags                                                              |
+# ----------------------------------------------------------------------
+Header unset ETag
+FileETag None
+
+# ----------------------------------------------------------------------
+# | Expires headers                                                    |
+# ----------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+
+ExpiresActive on
+ExpiresDefault                                      "access plus 0 seconds"
+
+# CSS
+ExpiresByType text/css                              "access plus 1 year"
+
+# Data interchange
+
+ExpiresByType application/json                      "access plus 0 seconds"
+ExpiresByType application/xml                       "access plus 0 seconds"
+ExpiresByType text/xml                              "access plus 0 seconds"
+
+# Favicon (cannot be renamed!) and cursor images
+ExpiresByType image/vnd.microsoft.icon              "access plus 1 week"
+ExpiresByType image/x-icon                          "access plus 1 week"
+
+# HTML
+ExpiresByType text/html                             "access plus 0 seconds"
+
+# JavaScript
+ExpiresByType application/javascript                "access plus 1 year"
+ExpiresByType application/x-javascript              "access plus 1 year"
+ExpiresByType text/javascript                       "access plus 1 year"
+
+# Media files
+ExpiresByType image/bmp                             "access plus 8 hours"
+ExpiresByType image/gif                             "access plus 8 hours"
+ExpiresByType image/jpeg                            "access plus 8 hours"
+ExpiresByType image/png                             "access plus 8 hours"
+ExpiresByType image/svg+xml                         "access plus 8 hours"
+
+# Web fonts
+
+# Embedded OpenType (EOT)
+ExpiresByType application/vnd.ms-fontobject         "access plus 1 month"
+ExpiresByType font/eot                              "access plus 1 month"
+
+# OpenType
+ExpiresByType font/opentype                         "access plus 1 month"
+
+# TrueType
+ExpiresByType application/x-font-ttf                "access plus 1 month"
+
+# Web Open Font Format (WOFF) 1.0
+ExpiresByType application/font-woff                 "access plus 1 month"
+ExpiresByType application/x-font-woff               "access plus 1 month"
+ExpiresByType font/woff                             "access plus 1 month"
+
+# Web Open Font Format (WOFF) 2.0
+ExpiresByType application/font-woff2                "access plus 1 month"
+
+# Other
+ExpiresByType text/x-cross-domain-policy            "access plus 1 week"
+
+</IfModule>
+
+AddOutputFilterByType INCLUDES text/html
+SetOutputFilter INCLUDES
+
+SetEnv CLIENT_NAME <%= client %>
+
+</VirtualHost>
+<% end %>
+<% end %>
+

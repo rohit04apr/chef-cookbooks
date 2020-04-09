@@ -1,0 +1,12 @@
+DEPENDENCIES
+  hc_oracle_xe
+    path: .
+    metadata: true
+  oracle-xe
+    git: https://github.com/juliandunn/oracle-xe.git
+    revision: 49419aa5770aaa8fc1ca0147339754a60d84aee0
+
+GRAPH
+  hc_oracle_xe (0.1.0)
+    oracle-xe (>= 0.0.0)
+  oracle-xe (0.1.0)

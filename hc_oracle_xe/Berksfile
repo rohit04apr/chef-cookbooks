@@ -1,0 +1,3 @@
+source 'https://supermarket.chef.io'
+metadata
+cookbook 'oracle-xe', git: 'https://github.com/juliandunn/oracle-xe.git'

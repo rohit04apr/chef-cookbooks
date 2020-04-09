@@ -1,0 +1,32 @@
+{
+  "name": "hc_zookeeper",
+  "description": "Installs/Configures hc_zookeeper",
+  "long_description": "Installs/Configures hc_zookeeper",
+  "maintainer": "company",
+  "maintainer_email": "devops@company.com",
+  "license": "all_rights",
+  "platforms": {
+  },
+  "dependencies": {
+    "cron": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": ""
+}

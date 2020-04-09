@@ -1,0 +1,4 @@
+source "https://supermarket.chef.io"
+
+metadata
+cookbook 'sudo', git: 'https://github.com/chef-cookbooks/sudo.git', tag: 'v2.7.2'

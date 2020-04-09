@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+        <!-- define a custom data source -->
+        <bean id="Level1ReportDS"
+                class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceDefinition">
+                <!-- this prop is always the same; it registers the custom ds -->
+                <property name="factory" ref="customDataSourceServiceFactory" />
+                <!-- name used in message catalog and elsewhere -->
+                <property name="name" value="Level1ReportDS" />
+                <!-- class name of implementation -->
+                <property name="serviceClassName" value="com.company.wig.level1.WIGDataSourceService" />
+                <!-- instance of validator (optional) must implement com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceValidator -->
+                <!-- definitions of properties you can edit -->
+                <property name="propertyDefinitions">
+                        <list>
+                                <map>
+                                        <entry key="name" value="ip" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="port" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="dbName" />
+                                </map>
+                        </list>
+                </property>
+                <property name="queryExecuterMap">
+                        <map>
+                                <entry key="webscraper" value="com.company.wig.level1.WIGQueryExecuterFactory" />
+                        </map>
+                </property>
+        </bean>
+
+        <!-- define a custom data source -->
+        <bean id="Level2ReportDS"
+                class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceDefinition">
+                <!-- this prop is always the same; it registers the custom ds -->
+                <property name="factory" ref="customDataSourceServiceFactory" />
+                <!-- name used in message catalog and elsewhere -->
+                <property name="name" value="Level2ReportDS" />
+                <!-- class name of implementation -->
+                <property name="serviceClassName" value="com.company.wig.level2.WIGDataSourceService" />
+                <!-- instance of validator (optional) must implement com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceValidator -->
+                <!-- definitions of properties you can edit -->
+                <property name="propertyDefinitions">
+                        <list>
+                                <map>
+                                        <entry key="name" value="ip" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="port" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="dbName" />
+                                </map>
+                        </list>
+                </property>
+                <property name="queryExecuterMap">
+                        <map>
+                                <entry key="webscraper" value="com.company.wig.level2.WIGQueryExecuterFactory" />
+                        </map>
+                </property>
+        </bean>
+
+        <!-- define a custom data source -->
+        <bean id="Level3ReportDS"
+                class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceDefinition">
+                <!-- this prop is always the same; it registers the custom ds -->
+                <property name="factory" ref="customDataSourceServiceFactory" />
+                <!-- name used in message catalog and elsewhere -->
+                <property name="name" value="Level3ReportDS" />
+                <!-- class name of implementation -->
+                <property name="serviceClassName" value="com.company.wig.level3.WIGDataSourceService" />
+                <!-- instance of validator (optional) must implement com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceValidator -->
+                <!-- definitions of properties you can edit -->
+                <property name="propertyDefinitions">
+                        <list>
+                                <map>
+                                        <entry key="name" value="ip" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="port" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="dbName" />
+                                </map>
+                        </list>
+                </property>
+                <property name="queryExecuterMap">
+                        <map>
+                                <entry key="webscraper" value="com.company.wig.level3.WIGQueryExecuterFactory" />
+                        </map>
+                </property>
+        </bean>
+        <!-- define a custom data source -->
+        <bean id="WIGDetailedDS"
+                class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceDefinition">
+                <!-- this prop is always the same; it registers the custom ds -->
+                <property name="factory" ref="customDataSourceServiceFactory" />
+                <!-- name used in message catalog and elsewhere -->
+                <property name="name" value="WIGDetailedDS" />
+                <!-- class name of implementation -->
+                <property name="serviceClassName"
+                        value="com.company.wig.detailed.WIGDataSourceService" />
+                <!-- instance of validator (optional) must implement com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceValidator -->
+                <!-- definitions of properties you can edit -->
+                <property name="propertyDefinitions">
+                        <list>
+                                <map>
+                                        <entry key="name" value="ip" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="port" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="dbName" />
+                                </map>
+                        </list>
+                </property>
+                <property name="queryExecuterMap">
+                        <map>
+                                <entry key="webscraper" value="com.company.wig.detailed.WIGQueryExecuterFactory" />
+                        </map>
+                </property>
+        </bean>
+
+        <!-- define a custom data source -->
+        <bean id="ErrorReportDS"
+                class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceDefinition">
+                <!-- this prop is always the same; it registers the custom ds -->
+                <property name="factory" ref="customDataSourceServiceFactory" />
+                <!-- name used in message catalog and elsewhere -->
+                <property name="name" value="ErrorReportDS" />
+                <!-- class name of implementation -->
+                <property name="serviceClassName" value="com.company.wig.error.WIGDataSourceService" />
+                <!-- instance of validator (optional) must implement com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceValidator -->
+                <!-- definitions of properties you can edit -->
+                <property name="propertyDefinitions">
+                        <list>
+                                <map>
+                                        <entry key="name" value="ip" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="port" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="dbName" />
+                                </map>
+                        </list>
+                </property>
+                <property name="queryExecuterMap">
+                        <map>
+                                <entry key="webscraper" value="com.company.wig.error.WIGQueryExecuterFactory" />
+                        </map>
+                </property>
+        </bean>
+
+        <!-- define a custom data source -->
+        <bean id="ScriptedReportDS"
+                class="com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceDefinition">
+                <!-- this prop is always the same; it registers the custom ds -->
+                <property name="factory" ref="customDataSourceServiceFactory" />
+                <!-- name used in message catalog and elsewhere -->
+                <property name="name" value="ScriptedReportDS" />
+                <!-- class name of implementation -->
+                <property name="serviceClassName"
+                        value="com.company.wig.scriptedreport.WIGDataSourceService" />
+                <!-- instance of validator (optional) must implement com.jaspersoft.jasperserver.api.engine.jasperreports.util.CustomDataSourceValidator -->
+                <!-- definitions of properties you can edit -->
+                <property name="propertyDefinitions">
+                        <list>
+                                <map>
+                                        <entry key="name" value="ip" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="port" />
+                                </map>
+                                <map>
+                                        <entry key="name" value="dbName" />
+                                </map>
+                        </list>
+                </property>
+                <property name="queryExecuterMap">
+                        <map>
+                                <entry key="webscraper"
+                                        value="com.company.wig.scriptedreport.WIGQueryExecuterFactory" />
+                        </map>
+                </property>
+        </bean>
+</beans>

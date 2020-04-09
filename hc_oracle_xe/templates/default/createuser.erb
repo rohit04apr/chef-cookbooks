@@ -1,0 +1,10 @@
+WHENEVER OSERROR EXIT 9;
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+
+
+create  tablespace TBSPC_<%=@Database_Schema%>  datafile '/u01/app/oracle/<%=@Database_Schema%>.dbf'  size 500M;
+create user <%= @Database_Schema %> identified by <%= @Database_Password %>  default tablespace TBSPC_<%=@Database_Schema%>  quota unlimited on TBSPC_<%=@Database_Schema%>  temporary tablespace TEMP;
+grant create any table, create any sequence, drop any sequence, drop any table to <%= @Database_Schema %>;
+grant connect,resource to <%= @Database_Schema %>;
+grant select any table, create any view to <%= @Database_Schema %>;
+exit;

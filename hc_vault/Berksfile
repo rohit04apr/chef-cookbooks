@@ -1,0 +1,5 @@
+source 'https://supermarket.chef.io'
+
+metadata
+cookbook 'chef-vault', git: 'https://github.com/chef-cookbooks/chef-vault.git', tag: 'v1.3.2'
+

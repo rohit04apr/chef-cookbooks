@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        #Enter server name here eg. phix-dev17.demo.hcinternal.net
+        ServerName api-<%= node['hc_apache']['phix']['wellcare']['conf']['base_domain'] %>
+
+        #Enter server alias here eg. *.phix-dev17.demo.hcinternal.net
+        ServerAlias api-<%= node['hc_apache']['phix']['wellcare']['conf']['base_domain'] %>
+
+        Include /etc/apache2/sites-enabled/external-integration.conf
+
+</VirtualHost>
+
+
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        #Enter server name here eg. phix-dev17.demo.hcinternal.net
+        ServerName  <%= node['hc_apache']['phix']['wellcare']['conf']['base_domain'] %>
+
+        #Enter server alias here eg. *.phix-dev17.demo.hcinternal.net
+        ServerAlias <%= node['hc_apache']['phix']['wellcare']['conf']['base_domain'] %>
+
+        #Location can be absolute path or relative path to the ServerRoot.
+        #Refer to http://httpd.apache.org/docs/2.4/mod/core.html#include
+        Include /etc/apache2/sites-enabled/portals.conf
+
+
+</VirtualHost>
+
+#</IfModule>
+
+#Location can be absolute path or relative path to the ServerRoot.
+#Refer to http://httpd.apache.org/docs/2.4/mod/core.html#include
+#Include /etc/apache2/sites-available/common.conf

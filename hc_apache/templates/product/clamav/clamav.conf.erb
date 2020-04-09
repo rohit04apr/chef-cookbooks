@@ -1,0 +1,7 @@
+<VirtualHost *:80>
+  ServerName node['hc_apache']['clamav']['virtualhost']['servername']
+  DocumentRoot /var/lib/clamav
+  <Location />
+        Require all granted
+  </Location>
+</VirtualHost>

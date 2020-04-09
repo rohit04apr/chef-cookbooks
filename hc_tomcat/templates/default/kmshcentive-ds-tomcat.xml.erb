@@ -1,0 +1,10 @@
+<Context path="/company-ds-tomcat"
+  docBase="/usr/local/applications/company-ds-tomcat"
+  debug="0" reloadable="true">
+   <Resource name="jdbc/company-ds-tomcat" auth="Container" type="javax.sql.DataSource"
+        maxActive="50" maxIdle="30" maxWait="10000" username="root"
+        password="<%= node['kms_password'] %>"
+        driverClassName="com.mysql.jdbc.Driver"
+        url="jdbc:mysql://localhost:3306/company"
+        factory="com.company.util.datasourcefactory.KmsDataSourceFactory" />
+</Context>

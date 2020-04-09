@@ -1,0 +1,7 @@
+name 'hc_josso'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures hc_josso'
+long_description 'Installs/Configures hc_josso'
+version '0.1.0'

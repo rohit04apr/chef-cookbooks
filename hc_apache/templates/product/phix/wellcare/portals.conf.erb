@@ -1,0 +1,299 @@
+DocumentRoot /usr/local/phix/applications/
+
+<Directory /usr/local/phix/applications/ >
+Order deny,allow
+Options -Indexes
+Require all granted
+</Directory>
+Alias /fidelity-reports "/usr/local/fidelity/applications/fidelity-reports/"
+Alias /individual "/usr/local/phix/applications/individual/"
+Alias /employer "/usr/local/phix/applications/employer/"
+Alias /employee "/usr/local/phix/applications/employee/"
+Alias /broker "/usr/local/phix/applications/broker/"
+Alias /exchange-admin "/usr/local/phix/applications/exchange-admin/"
+Alias /de "/usr/local/phix/applications/de/"
+Alias /phix-reports "/usr/local/phix/applications/phix-reports/"
+Alias /staticContent/ "/usr/local/phix/staticContent/"
+
+
+
+
+<LocationMatch "/(employer|individual|employee|broker|exchange-admin|de|phix-reports)/">
+	Options +Includes
+</LocationMatch>
+
+Alias /fidelity-sso "/usr/local/fidelity/applications/fidelity-sso/"
+#Alias /fidelity-reports "/usr/local/fidelity/applications/fidelity-reports/"
+
+        <LocationMatch "/(fidelity-sso|fidelity-reports)/">
+                Options +Includes
+        </LocationMatch>
+<Directory /usr/local/phix/staticContent/>
+#SSLRequireSSL
+Order deny,allow
+Options -Indexes +Includes +FollowSymLinks
+Require all granted
+#---------------------------------------------------------------------------------------------
+# Configuration to activate pre 2.4 expression parser. This is used for SEO SSI pages to get hold
+# of query parameters using regular exp. Refer to the following link 
+# http://stackoverflow.com/questions/16091816/apache-regex-backreferences-unreachable-in-httpd-2-4
+#---------------------------------------------------------------------------------------------
+#SSILegacyExprParser on
+
+RewriteEngine on
+#---------------------------------------------------------------------------------------------
+#Configuration to restrict direct access to real estate content. HTMLs available in "public" folder
+#are whitelisted
+#---------------------------------------------------------------------------------------------
+
+RewriteCond %{REQUEST_FILENAME} !/public/ [NC]
+RewriteCond %{REQUEST_FILENAME} .*html [NC]
+RewriteRule .* - [F,NS,L]
+
+#---------------------------------------------------------------------------------------------
+#Configuration to add fall back resource from default theme if images don't exist in custom theme
+#---------------------------------------------------------------------------------------------
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !/default/ [NC]
+RewriteCond %{REQUEST_FILENAME}  (images|gif|ico|jpe?g|png)$ [NC]
+RewriteRule "(.*)/theme([^/]*)/[^/]+/(.*)" /staticContent/$1/theme$2/default/$3 [NC,NS,L]
+
+#---------------------------------------------------------------------------------------------
+#Configuration to add fall back resource from default folder if not present in tenant folder.
+#---------------------------------------------------------------------------------------------
+
+RewriteCond %{REQUEST_FILENAME} !/default/ [NC]
+RewriteCond %{REQUEST_FILENAME} !-f [NC]
+RewriteRule "(.*)/exchange/[^/]+/(.*)" /staticContent/$1/exchange/default/$2 [NC,NS,L]
+
+
+</Directory>
+
+<FilesMatch "^\.ht">
+Order allow,deny
+Deny from all
+Satisfy All
+</FilesMatch>
+
+RewriteEngine on
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS) [OR]
+RewriteCond %{REQUEST_URI} fusionchart[^\s]{0,}\.js [NC]
+RewriteRule .* - [F]
+
+ErrorDocument 400 /staticContent/apache/error.html
+ErrorDocument 401 /staticContent/apache/forbidden.html
+ErrorDocument 403 /staticContent/apache/forbidden.html
+ErrorDocument 404 /staticContent/apache/resourceNotFound.html
+ErrorDocument 500 /staticContent/apache/error.html
+ErrorDocument 502 /staticContent/apache/siteDown.html
+ErrorDocument 503 /staticContent/apache/siteDown.html
+
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/ssl_access.log combined
+#	LogLevel info
+
+#SSLEngine on	
+#SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+#SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+
+ProxyRequests Off
+ProxyPreserveHost Off
+
+ProxyPass /individual ajp://localhost:8009/individual
+ProxyPassReverse /individual ajp://localhost:8009/individual
+
+ProxyPass /employer ajp://localhost:8009/employer
+ProxyPassReverse /employer ajp://localhost:8009/employer
+
+ProxyPass /exchange-admin ajp://localhost:8009/exchange-admin
+ProxyPassReverse /exchange-admin  ajp://localhost:8009/exchange-admin
+
+ProxyPass /broker  ajp://localhost:8009/broker
+ProxyPassReverse /broker  ajp://localhost:8009/broker
+
+ProxyPass /employee ajp://localhost:8009/employee
+ProxyPassReverse /employee  ajp://localhost:8009/employee
+
+ProxyPass /de ajp://localhost:8009/de
+ProxyPassReverse /de ajp://localhost:8009/de
+
+ProxyPass /phix-reports ajp://localhost:8009/phix-reports
+ProxyPassReverse /phix-reports  ajp://localhost:8009/phix-reports
+
+ProxyPass /fidelity-sso ajp://localhost:8009/fidelity-sso
+ProxyPassReverse /fidelity-sso  ajp://localhost:8009/fidelity-sso
+
+ProxyPass /fidelity-reports ajp://localhost:8009/fidelity-reports
+ProxyPassReverse /fidelity-reports ajp://localhost:8009/fidelity-reports
+#SSLProxyEngine On
+
+
+#----------------------------------------------------------------------
+# Fixing mime type for favicon
+#----------------------------------------------------------------------
+
+<IfModule mod_mime.c>
+
+AddType image/x-icon cur ico
+
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Character encodings                                                |
+# ----------------------------------------------------------------------
+
+AddDefaultCharset utf-8
+
+# ######################################################################
+# # SECURITY                                                           #
+# ######################################################################
+
+# ----------------------------------------------------------------------
+# | Clickjacking                                                       |
+# ----------------------------------------------------------------------
+Header set X-Frame-Options "SAMEORIGIN"
+<FilesMatch "\.(css|eot|gif|ico|jpe?g|js|pdf|png|txt)$">
+Header unset X-Frame-Options
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# | Content Security Policy (CSP)                                      |
+# ----------------------------------------------------------------------
+Header add Content-Security-Policy "default-src 'self' *.google-analytics.com *.livelook.com *.livelook.net *.ssl.cf2.rackcdn.com  *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png *.liveperson.net *.lpsnmedia.net va.v.liveperson.net hello.myfonts.net *.livechatinc.com 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: *.google-analytics.com *.ssl.cf2.rackcdn.com *.livelook.net *.livelook.com *.googleapis.com *.youtube.com *.gstatic.com maps.google.com/mapfiles/ms/icons/blue-dot.png" 
+<FilesMatch "\.(css|eot|gif|ico|jpe?g|pdf|png|txt)$">
+Header unset Content-Security-Policy
+</FilesMatch>
+
+# ----------------------------------------------------------------------
+# | HTTP Strict Transport Security (HSTS)                              |
+# ----------------------------------------------------------------------
+
+Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+# ----------------------------------------------------------------------
+# | HTTP only cookies                               				   |
+# ----------------------------------------------------------------------
+
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+
+# ----------------------------------------------------------------------
+# | Reducing MIME type security risks                                  |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Reflected Cross-Site Scripting (XSS) attacks                       |
+# ----------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+
+Header set X-XSS-Protection "1; mode=block"
+
+<FilesMatch "\.(appcache|atom|bbaw|bmp|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
+Header unset X-XSS-Protection
+</FilesMatch>
+
+</IfModule>
+
+
+# ######################################################################
+# # WEB PERFORMANCE                                                    #
+# ######################################################################
+
+# ----------------------------------------------------------------------
+# | Compression                                                        |
+# ----------------------------------------------------------------------
+
+<IfModule mod_filter.c>
+AddOutputFilterByType DEFLATE "application/javascript" \
+"application/json" \
+"font/eot" \
+"font/opentype" \
+"image/bmp" \
+"text/css" \
+"text/html" \
+"text/javascript" \
+"text/plain"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# | Pragma                                                             |
+# ----------------------------------------------------------------------
+Header unset Pragma
+
+# ----------------------------------------------------------------------
+# | ETags                                                              |
+# ----------------------------------------------------------------------
+Header unset ETag
+FileETag None
+
+# ----------------------------------------------------------------------
+# | Expires headers                                                    |
+# ----------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+
+ExpiresActive on
+ExpiresDefault                                      "access plus 0 seconds"
+
+# CSS
+ExpiresByType text/css                              "access plus 1 year"
+
+# Data interchange
+
+ExpiresByType application/json                      "access plus 0 seconds"
+ExpiresByType application/xml                       "access plus 0 seconds"
+ExpiresByType text/xml                              "access plus 0 seconds"
+
+# Favicon (cannot be renamed!) and cursor images
+ExpiresByType image/vnd.microsoft.icon              "access plus 1 week"
+ExpiresByType image/x-icon                          "access plus 1 week"
+
+# HTML
+ExpiresByType text/html                             "access plus 0 seconds"
+
+# JavaScript
+ExpiresByType application/javascript                "access plus 1 year"
+ExpiresByType application/x-javascript              "access plus 1 year"
+ExpiresByType text/javascript                       "access plus 1 year"
+
+# Media files
+ExpiresByType image/bmp                             "access plus 8 hours"
+ExpiresByType image/gif                             "access plus 8 hours"
+ExpiresByType image/jpeg                            "access plus 8 hours"
+ExpiresByType image/png                             "access plus 8 hours"
+ExpiresByType image/svg+xml                         "access plus 8 hours"
+
+# Web fonts
+
+# Embedded OpenType (EOT)
+ExpiresByType application/vnd.ms-fontobject         "access plus 1 month"
+ExpiresByType font/eot                              "access plus 1 month"
+
+# OpenType
+ExpiresByType font/opentype                         "access plus 1 month"
+
+# TrueType
+ExpiresByType application/x-font-ttf                "access plus 1 month"
+
+# Web Open Font Format (WOFF) 1.0
+ExpiresByType application/font-woff                 "access plus 1 month"
+ExpiresByType application/x-font-woff               "access plus 1 month"
+ExpiresByType font/woff                             "access plus 1 month"
+
+# Web Open Font Format (WOFF) 2.0
+ExpiresByType application/font-woff2                "access plus 1 month"
+
+# Other
+ExpiresByType text/x-cross-domain-policy            "access plus 1 week"
+
+</IfModule>
+
+AddOutputFilterByType INCLUDES text/html
+SetOutputFilter INCLUDES
+
+SetEnvIf Host "^([^\.]+)\." CLIENT_NAME=$1
